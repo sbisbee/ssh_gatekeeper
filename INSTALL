@@ -1,0 +1,37 @@
+Install Instructions
+====================
+
+WARNING: It's easy to lock yourself out of a box if you install this code
+improperly. Make sure you generate your codes first and never close an SSH
+connection to a box you don't have physical access to until you are sure
+everything works.
+
+Note: See http://code.google.com/p/google-authenticator/ if you have issues
+building google-authenticator libpam code.
+
+1. Build
+
+Run `make` to pull in the submodules (google-authenticator), build its demo
+application, and copy the demo application into the current root.
+
+2. Install the Files
+
+Running `make install` will drop ssh_gatekeeper.sh and
+google-authenticator-demo into /usr/local/bin, and flip on their executable
+bit.
+
+3. Set Up SSH
+
+*WARNING* This part could lock you out of the box, so if you are running these
+commands on SSH make sure you do NOT log out until you have confirmed that the
+installation worked.
+
+Add this to your sshd_config: ForceCommand ssh_gatekeeper.sh
+
+Restart your ssh process.
+
+4. Test
+
+Log into your box with SSH. Make sure that it accepts the correct code, does
+not accept incorrect codes, and that you cannot hit Ctrl+C to drop into a
+shell.
