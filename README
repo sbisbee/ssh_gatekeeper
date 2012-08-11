@@ -6,4 +6,7 @@ https://calomel.org/openssh.html under the Creative Commons
 Attribution-ShareAlike 3.0 License.
 
 The script is being hosted here so that it's in a more developer friendly
-medium.
+medium, but also so that the following modifications could be made:
+
+  - Run the google-authenticator's demo binary instead of asking a question. If
+    the binary exits successfully, then let the user in.

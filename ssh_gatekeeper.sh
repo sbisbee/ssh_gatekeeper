@@ -8,6 +8,8 @@
 ## but scp is denied.
 #
 
+GOOGLE_AUTHENTICATOR='./google-authenticator-demo'
+
 ## Disconnect clients who try to quit the script (Ctrl-c)
 trap jail INT
 jail()
@@ -19,12 +21,6 @@ jail()
 ## Allow SSH. Clients can ssh to the box and then answer the $QUERY question.
 if [ -z "$SSH_ORIGINAL_COMMAND" ];
   then
-    ## This is the question the client needs to know the answer to.
-    ## Here we are asking for the current minute, day of the month
-    ## and hour (24-hour time). If the date is "Mon Jan 10 13:25:00 EST 2020"
-    ## then the answer is "251013"
-    QUERY=`date +%M%d%H`
-
     ### The welcome message. This can be helpful or completely arbitrary
     ### depending on your user. Here we use a random quote as we are
     ### expecting the user to already know the question.
@@ -35,21 +31,19 @@ if [ -z "$SSH_ORIGINAL_COMMAND" ];
     echo ""
 
     ### The Decision
-    ### If the answer is correct give the user their shell.
-    ### If the answer is wrong, log the attempt and kill the connection.
-    while read -s inputline
-      do
-       answer="$inputline"
-         if [ $QUERY = "${answer}" ];
-           then
-             $SHELL -l
-             exit 0
-           else
-             logger "ssh_gatekeeper $USER login failed from $SSH_CLIENT"
-             kill -9 $PPID
-             exit 0
-         fi
-      done
+    ### If the binary exits okay, give the user their shell.
+    ### If the binary exits with an error, log the attempt and kill the connection.
+    $GOOGLE_AUTHENTICATOR
+
+    if [ $? -eq 0 ];
+      then
+        $SHELL -l
+        exit 0
+      fi
+
+    logger "ssh_gatekeeper $USER login failed from $SSH_CLIENT"
+    kill -9 $PPID
+    exit 0
 fi
 
 ## Allow RSYNC. Rsync can not be used with the question above.
