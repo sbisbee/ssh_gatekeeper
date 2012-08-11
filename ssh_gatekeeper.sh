@@ -8,7 +8,7 @@
 ## but scp is denied.
 #
 
-GOOGLE_AUTHENTICATOR='./google-authenticator-demo'
+GOOGLE_AUTHENTICATOR='google-authenticator-demo'
 
 ## Disconnect clients who try to quit the script (Ctrl-c)
 trap jail INT
