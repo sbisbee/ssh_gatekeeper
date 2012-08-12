@@ -10,3 +10,6 @@ medium, but also so that the following modifications could be made:
 
   - Run the google-authenticator's demo binary instead of asking a question. If
     the binary exits successfully, then let the user in.
+
+  - Whether to allow rsync and scp, which doesn't work with 2 factor auth, is
+    now configurable.
