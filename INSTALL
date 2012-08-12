@@ -26,7 +26,11 @@ bit.
 commands on SSH make sure you do NOT log out until you have confirmed that the
 installation worked.
 
-Add this to your sshd_config: ForceCommand ssh_gatekeeper.sh
+To enable without scp/rsync, add this to your sshd_config:
+ForceCommand /usr/local/bin/ssh_gatekeeper.sh
+
+To enable with scp and rsync, add this to your sshd_config:
+ForceCommand ALLOW_SCP_RSYNC=1 /usr/local/bin/ssh_gatekeeper.sh
 
 Restart your ssh process.
 
