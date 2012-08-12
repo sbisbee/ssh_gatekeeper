@@ -21,15 +21,6 @@ jail()
 ## Allow SSH. Clients can ssh to the box and then answer the $QUERY question.
 if [ -z "$SSH_ORIGINAL_COMMAND" ];
   then
-    ### The welcome message. This can be helpful or completely arbitrary
-    ### depending on your user. Here we use a random quote as we are
-    ### expecting the user to already know the question.
-    echo "" 
-    echo "    All truths are easy to understand once they are"
-    echo "    discovered; the point is to discover them."
-    echo "                                   -Galileo Galilei"
-    echo ""
-
     ### The Decision
     ### If the binary exits okay, give the user their shell.
     ### If the binary exits with an error, log the attempt and kill the connection.
