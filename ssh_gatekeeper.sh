@@ -18,7 +18,6 @@ jail()
    exit 0
  }
 
-## Allow SSH. Clients can ssh to the box and then answer the $QUERY question.
 if [ -z "$SSH_ORIGINAL_COMMAND" ];
   then
     ### The Decision
@@ -30,32 +29,25 @@ if [ -z "$SSH_ORIGINAL_COMMAND" ];
       then
         $SHELL -l
         exit 0
-      fi
+    fi
 
     logger "ssh_gatekeeper $USER login failed from $SSH_CLIENT"
-    kill -9 $PPID
-    exit 0
-fi
-
-## Allow RSYNC. Rsync can not be used with the question above.
-## We need to let the command though so our shell environment is clean. 
-if [ `echo $SSH_ORIGINAL_COMMAND | awk '{print $1}'` = rsync ];
+elif [ -n "$ALLOW_SCP_RSYNC" ];
   then
-    $SHELL -c "$SSH_ORIGINAL_COMMAND"
-    exit 0
+    # rsync and scp don't like google-authenticator, so we're going to let them
+    # run if $ALLOW_SCP_RSYNC is set.
+    cmd=`echo "$SSH_ORIGINAL_COMMAND" | awk '{ print $1 }'`
+
+    if [ "$cmd" = "rsync" -o "$cmd" = "scp" -o "$cmd" = "/usr/bin/rsync" -o "$cmd" = "/usr/bin/scp" ];
+      then
+        $SHELL -c "$SSH_ORIGINAL_COMMAND"
+        exit 0
+    fi
+
+    cmd=''
+
+    logger "ssh_gatekeeper $USER from $SSH_CLIENT attempted command $SSH_ORIGINAL_COMMAND"
 fi
 
-## Allow sftp and sshfs. Make sure the path to your sftp-server binary
-## is correctly expressed below. We need to let the command though so
-## our shell environment is clean.
-if [ `echo $SSH_ORIGINAL_COMMAND | awk '{print $1}'` = "/usr/lib/openssh/sftp-server" ];
-  then
-    $SHELL -c "$SSH_ORIGINAL_COMMAND"
-    exit 0
-fi
-
-## Default deny. This is the last command to catch all other command
-## input. If the client tries to use anything other than ssh or rsync
-## the connection is dropped. SCP is denied.
 kill -9 $PPID
 exit 0
